@@ -1,4 +1,4 @@
-# Actions
+# Laravel Routing
 This package provides attributes for regsitering routes and middleware on Laravel controllers.
 
 ## Installation
