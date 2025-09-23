@@ -58,7 +58,7 @@ Route::get('users', Controller::class)
 
 #### Multiple methods
 
-The `methods` prop can take a string or an array of methods. If an array is passed in, it will register all methods.
+The `methods` prop can take a single method or an array of methods. If an array is passed in, it will register all methods. Use of the `Method` enum is required.
 
 ```php
 use Support\Routing\Attributes\Route;
