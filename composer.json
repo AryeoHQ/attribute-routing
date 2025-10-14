@@ -1,0 +1,71 @@
+{
+    "name": "aryeo/attribute-routing",
+    "description": "A routing package for Laravel using attributes.",
+    "keywords": [
+        "Aryeo",
+        "laravel",
+        "actions"
+    ],
+    "homepage": "https://github.com/aryeohq/attribute-routing",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Justin Seliga",
+            "email": "justinsel@zillowgroup.com"
+        },
+        {
+            "name": "Rob Fonseca",
+            "email": "robfo@zillowgroup.com"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "laravel/framework": "^12.0",
+        "symfony/finder": "^7.3",
+        "symfony/http-foundation": "^7.3"
+    },
+    "require-dev": {
+        "aryeo/tooling-laravel": "dev-version-1",
+        "brianium/paratest": "^7.0",
+        "orchestra/testbench": "^10.0.0",
+        "orchestra/testbench-core": "^10.0.0",
+        "phpunit/phpunit": "^12",
+        "shipmonk/composer-dependency-analyser": "^1.8"
+    },
+    "repositories": {
+        "tooling-laravel": {
+            "type": "vcs",
+            "url": "https://github.com/AryeoHQ/tooling-laravel"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Support\\": "src/Support/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "aryeo/tooling-laravel": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Support\\Routing\\RoutingServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
