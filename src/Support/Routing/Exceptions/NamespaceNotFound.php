@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Support\Routing\Exceptions;
 
-use Exception;
+use LogicException;
 
-class NamespaceNotFound extends Exception
+class NamespaceNotFound extends LogicException
 {
     public function __construct(string $filePath)
     {

@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Support\Routing\Attributes;
 
-use Tests\TestCase;
-use Support\Routing\Enums\Method;
-use Support\Routing\Attributes\Route;
-use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use Support\Routing\Attributes\Contracts\RoutingAttribute;
+use Support\Routing\Attributes\Route;
+use Support\Routing\Enums\Method;
+use Tests\TestCase;
 
 #[CoversClass(Route::class)]
 class RouteTest extends TestCase

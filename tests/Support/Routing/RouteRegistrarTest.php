@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Support\Routing;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
+use Support\Routing\Enums\Method;
+use Support\Routing\Exceptions\NamespaceNotFound;
+use Support\Routing\RouteRegistrar;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Tests\Fixtures;
 use Tests\TestCase;
-use Support\Routing\Enums\Method;
-use Support\Routing\RouteRegistrar;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\CoversClass;
-use Support\Routing\Exceptions\NamespaceNotFound;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 #[CoversClass(RouteRegistrar::class)]
 class RouteRegistrarTest extends TestCase

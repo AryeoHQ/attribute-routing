@@ -33,7 +33,7 @@ abstract class TestCase extends Testbench\TestCase
         string $uri,
         Method $httpMethod,
         string|array|null $middleware,
-        ?bool $withTrashed = false
+        null|bool $withTrashed = false
     ): self {
         $routes = collect(app()->router->getRoutes());
 

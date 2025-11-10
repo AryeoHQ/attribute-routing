@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Support\Routing\Attributes;
 
-use Tests\TestCase;
-use PHPUnit\Framework\Attributes\Test;
-use Support\Routing\Attributes\Middleware;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use Support\Routing\Attributes\Contracts\RoutingAttribute;
+use Support\Routing\Attributes\Middleware;
+use Tests\TestCase;
 
 #[CoversClass(Middleware::class)]
 class MiddlewareTest extends TestCase

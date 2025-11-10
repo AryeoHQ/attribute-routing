@@ -10,14 +10,14 @@ use Support\Routing\Enums\Method;
 
 class Controller
 {
+    #[Middleware([
+        'auth',
+        'throttle:100,1',
+    ])]
     #[Route(
         name: 'bar',
         uri: 'bar',
         methods: Method::Get,
     )]
-    #[Middleware([
-        'auth',
-        'throttle:100,1',
-    ])]
     public function __invoke() {}
 }

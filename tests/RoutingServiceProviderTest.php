@@ -2,11 +2,11 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use Support\Routing\Enums\Method;
 use Support\Routing\RouteRegistrar;
-use PHPUnit\Framework\Attributes\Test;
 use Support\Routing\RoutingServiceProvider;
-use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RoutingServiceProvider::class)]
 class RoutingServiceProviderTest extends TestCase

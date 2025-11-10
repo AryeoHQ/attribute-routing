@@ -10,6 +10,7 @@ use Support\Routing\Enums\Method;
 
 class Controller
 {
+    #[Middleware('auth')]
     #[Route(
         name: 'foo',
         uri: 'foo',
@@ -17,6 +18,5 @@ class Controller
         methods: [Method::Put, Method::Patch],
         withTrashed: true,
     )]
-    #[Middleware('auth')]
     public function __invoke() {}
 }
