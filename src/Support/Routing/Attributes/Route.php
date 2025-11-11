@@ -19,8 +19,8 @@ final readonly class Route implements RoutingAttribute
         public string $name,
         public string $uri,
         public Method|array $methods,
-        public null|string $prefix = null,
-        public null|bool $withTrashed = false,
+        public ?string $prefix = null,
+        public ?bool $withTrashed = false,
     ) {}
 
     /**

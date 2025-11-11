@@ -124,4 +124,64 @@ class RouteRegistrarTest extends TestCase
 
         $this->routeRegistrar->registerFile($this->getFixture('Foo/MissingNamespace.php'));
     }
+
+    #[Test]
+    public function registrar_can_apply_class_level_prefix(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('WithClassPrefix/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\WithClassPrefix\Controller::class,
+            name: 'with-class-prefix',
+            uri: 'api/resource',
+            httpMethod: Method::Get,
+            middleware: ['auth'],
+            withTrashed: false,
+        );
+    }
+
+    #[Test]
+    public function registrar_can_apply_method_level_prefix(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('WithMethodPrefix/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\WithMethodPrefix\Controller::class,
+            name: 'with-method-prefix',
+            uri: 'api/resource',
+            httpMethod: Method::Get,
+            middleware: ['auth'],
+            withTrashed: false,
+        );
+    }
+
+    #[Test]
+    public function registrar_can_combine_class_and_method_level_prefix(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('WithBothPrefixes/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\WithBothPrefixes\Controller::class,
+            name: 'with-both-prefixes',
+            uri: 'api/v1/resource',
+            httpMethod: Method::Get,
+            middleware: ['auth'],
+            withTrashed: false,
+        );
+    }
+
+    #[Test]
+    public function registrar_can_combine_all_prefix_types(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('WithAllPrefixes/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\WithAllPrefixes\Controller::class,
+            name: 'with-all-prefixes',
+            uri: 'api/v1/admin/resource',
+            httpMethod: Method::Get,
+            middleware: ['auth'],
+            withTrashed: false,
+        );
+    }
 }

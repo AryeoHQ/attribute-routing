@@ -84,6 +84,8 @@ class RouteRegistrar
      */
     protected function registerRoute(ReflectionClass $class): void
     {
+        $classPrefix = $this->getClassPrefix($class);
+
         foreach ($class->getMethods() as $method) {
             $attributes = $this->getAttributesForTheMethod($method);
 
@@ -91,7 +93,7 @@ class RouteRegistrar
                 continue;
             }
 
-            $routeDetails = $this->getRouteDetails($attributes, $method, $class);
+            $routeDetails = $this->getRouteDetails($attributes, $method, $class, $classPrefix);
 
             foreach ($routeDetails->methods as $httpMethod) {
                 /** @var Method $httpMethod */
@@ -113,11 +115,23 @@ class RouteRegistrar
     }
 
     /**
+     * @param  ReflectionClass<object>  $class
+     */
+    protected function getClassPrefix(ReflectionClass $class): ?string
+    {
+        $classPrefixAttribute = collect($class->getAttributes(Attributes\Prefix::class))
+            ->map(fn(ReflectionAttribute $attribute) => $attribute->newInstance())
+            ->first();
+
+        return $classPrefixAttribute?->prefix;
+    }
+
+    /**
      * @param  array<ReflectionAttribute<RoutingAttribute>>  $attributes
      * @param  ReflectionClass<object>  $class
      * @return object{name: string, uri: string, methods: array<Method>, action: class-string<object>|array{class-string<object>, non-empty-string}, prefix: ?string, withTrashed: ?bool, middleware: array<string>}
      */
-    protected function getRouteDetails(array $attributes, ReflectionMethod $method, ReflectionClass $class): object
+    protected function getRouteDetails(array $attributes, ReflectionMethod $method, ReflectionClass $class, ?string $classPrefix): object
     {
         $attributes = collect($attributes)
             ->map(fn (ReflectionAttribute $attribute) => $attribute->newInstance());
@@ -125,18 +139,24 @@ class RouteRegistrar
         $routeAttribute = $attributes->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Route);
         /** @var Attributes\Middleware $middlewareAttribute */
         $middlewareAttribute = $attributes->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Middleware);
+        /** @var Attributes\Prefix|null $methodPrefixAttribute */
+        $methodPrefixAttribute = $attributes->firstWhere(fn(RoutingAttribute $attribute) => $attribute instanceof Attributes\Prefix);
 
         /** @var class-string<object>|array{class-string<object>, non-empty-string} */
         $action = $method->getName() === '__invoke'
             ? $class->getName()
             : [$class->getName(), $method->getName()];
 
+        $prefix = collect([$classPrefix, $methodPrefixAttribute?->prefix, $routeAttribute->prefix])
+            ->filter()
+            ->implode('/');
+
         return (object) [
             'name' => $routeAttribute->name,
             'uri' => $routeAttribute->uri,
             'methods' => $routeAttribute->getMethods(),
             'action' => $action,
-            'prefix' => $routeAttribute->prefix,
+            'prefix' => $prefix ?: null,
             'withTrashed' => $routeAttribute->withTrashed,
             'middleware' => $middlewareAttribute->getMiddleware(),
         ];
