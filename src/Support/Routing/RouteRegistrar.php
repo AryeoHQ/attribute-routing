@@ -87,6 +87,10 @@ class RouteRegistrar
         foreach ($class->getMethods() as $method) {
             $attributes = $this->getAttributesForTheMethod($method);
 
+            if (count($attributes) === 0) {
+                continue;
+            }
+
             $routeDetails = $this->getRouteDetails($attributes, $method, $class);
 
             foreach ($routeDetails->methods as $httpMethod) {

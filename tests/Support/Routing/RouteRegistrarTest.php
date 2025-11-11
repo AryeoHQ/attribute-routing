@@ -32,6 +32,18 @@ class RouteRegistrarTest extends TestCase
     }
 
     #[Test]
+    public function registrar_can_skip_a_file_with_no_attribute(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('Bar/Index/Controller.php'));
+
+        $this->assertRouteNotRegistered(
+            controller: Fixtures\Bar\Index\Controller::class,
+            name: 'bar.index',
+            uri: 'bar/index',
+        );
+    }
+
+    #[Test]
     public function registrar_can_register_multiple_routes_for_the_same_controller(): void
     {
         $this->routeRegistrar->registerFile($this->getFixture('Foo/Controller.php'));
