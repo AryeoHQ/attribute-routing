@@ -42,7 +42,7 @@ class Controller
     #[Route(
         name: 'users.index',
         uri: 'users',
-        prefix: 'v1'
+        prefix: 'v1',
         methods: Method::Get,
     )]
     public function __invoke() {}

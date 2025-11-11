@@ -74,4 +74,37 @@ abstract class TestCase extends Testbench\TestCase
 
         return $this;
     }
+
+    public function assertRouteNotRegistered(
+        string $controller,
+        string $name,
+        string $uri,
+    ): self {
+        $routes = collect(app()->router->getRoutes());
+
+        $routeRegistered = $routes
+            ->contains(function (Route $route) use ($controller, $name, $uri) {
+                $routeController = $route->getAction(0) ?? $route->getController() !== null
+                    ? get_class($route->getController())
+                    : null;
+
+                if ($routeController !== $controller) {
+                    return false;
+                }
+
+                if ($route->getName() !== $name) {
+                    return false;
+                }
+
+                if ($route->uri() !== $uri) {
+                    return false;
+                }
+
+                return true;
+            });
+
+        $this->assertFalse($routeRegistered, "`The controller {$controller} should not have been registered with the expected details`");
+
+        return $this;
+    }
 }
