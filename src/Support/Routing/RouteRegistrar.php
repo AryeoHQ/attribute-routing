@@ -147,16 +147,14 @@ class RouteRegistrar
             ? $class->getName()
             : [$class->getName(), $method->getName()];
 
-        $prefix = collect([$classPrefix, $methodPrefixAttribute?->prefix, $routeAttribute->prefix])
-            ->filter()
-            ->implode('/');
-
         return (object) [
             'name' => $routeAttribute->name,
             'uri' => $routeAttribute->uri,
             'methods' => $routeAttribute->getMethods(),
             'action' => $action,
-            'prefix' => $prefix ?: null,
+            'prefix' => collect([$classPrefix, $methodPrefixAttribute?->prefix, $routeAttribute->prefix])
+                ->filter()
+                ->pipe(fn($collection) => $collection->isNotEmpty() ? $collection->implode('/') : null),
             'withTrashed' => $routeAttribute->withTrashed,
             'middleware' => $middlewareAttribute->getMiddleware(),
         ];
