@@ -99,9 +99,11 @@ abstract class TestCase extends Testbench\TestCase
                 if ($route->uri() !== $uri) {
                     return false;
                 }
+
+                return true;
             });
 
-        $this->assertFalse($routeRegistered, "`The controller {$controller} was registered with the expected details`");
+        $this->assertFalse($routeRegistered, "`The controller {$controller} should not have been registered with the expected details`");
 
         return $this;
     }
