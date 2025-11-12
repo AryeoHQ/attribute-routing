@@ -44,13 +44,28 @@ class RouteRegistrarTest extends TestCase
     }
 
     #[Test]
-    public function registrar_can_register_multiple_routes_for_the_same_controller(): void
+    public function registrar_can_register_a_route_with_no_middleware_attribute(): void
     {
-        $this->routeRegistrar->registerFile($this->getFixture('Foo/Controller.php'));
+        $this->routeRegistrar->registerFile($this->getFixture('Foo/Show/Controller.php'));
 
         $this->assertRouteRegistered(
-            controller: Fixtures\Foo\Controller::class,
-            name: 'foo',
+            controller: Fixtures\Foo\Show\Controller::class,
+            name: 'foo.show',
+            uri: 'foo/{foo}',
+            httpMethod: Method::Get,
+            middleware: null,
+            withTrashed: false,
+        );
+    }
+
+    #[Test]
+    public function registrar_can_register_multiple_routes_for_the_same_controller(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('Foo/Index/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Foo\Index\Controller::class,
+            name: 'foo.index',
             uri: 'v1/foo',
             httpMethod: Method::Put,
             middleware: ['auth'],
@@ -58,8 +73,8 @@ class RouteRegistrarTest extends TestCase
         );
 
         $this->assertRouteRegistered(
-            controller: Fixtures\Foo\Controller::class,
-            name: 'foo',
+            controller: Fixtures\Foo\Index\Controller::class,
+            name: 'foo.index',
             uri: 'v1/foo',
             httpMethod: Method::Patch,
             middleware: ['auth'],
@@ -67,7 +82,7 @@ class RouteRegistrarTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function registrar_can_register_a_directory(): void
     {
         $this->routeRegistrar->registerDirectory(__DIR__.'/../../Fixtures');
@@ -91,8 +106,8 @@ class RouteRegistrarTest extends TestCase
         );
 
         $this->assertRouteRegistered(
-            controller: Fixtures\Foo\Controller::class,
-            name: 'foo',
+            controller: Fixtures\Foo\Index\Controller::class,
+            name: 'foo.index',
             uri: 'v1/foo',
             httpMethod: Method::Put,
             middleware: ['auth'],
@@ -100,8 +115,8 @@ class RouteRegistrarTest extends TestCase
         );
 
         $this->assertRouteRegistered(
-            controller: Fixtures\Foo\Controller::class,
-            name: 'foo',
+            controller: Fixtures\Foo\Index\Controller::class,
+            name: 'foo.index',
             uri: 'v1/foo',
             httpMethod: Method::Patch,
             middleware: ['auth'],

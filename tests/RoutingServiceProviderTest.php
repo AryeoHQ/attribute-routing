@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Support\Routing\Enums\Method;
 use Support\Routing\RouteRegistrar;
 use Support\Routing\RoutingServiceProvider;
+use Tests\Fixtures\Middleware\GlobalMiddleware;
 
 #[CoversClass(RoutingServiceProvider::class)]
 class RoutingServiceProviderTest extends TestCase
@@ -42,8 +43,8 @@ class RoutingServiceProviderTest extends TestCase
         );
 
         $this->assertRouteRegistered(
-            controller: Fixtures\Foo\Controller::class,
-            name: 'foo',
+            controller: Fixtures\Foo\Index\Controller::class,
+            name: 'foo.index',
             uri: 'v1/foo',
             httpMethod: Method::Put,
             middleware: ['auth'],
@@ -51,12 +52,32 @@ class RoutingServiceProviderTest extends TestCase
         );
 
         $this->assertRouteRegistered(
-            controller: Fixtures\Foo\Controller::class,
-            name: 'foo',
+            controller: Fixtures\Foo\Index\Controller::class,
+            name: 'foo.index',
             uri: 'v1/foo',
             httpMethod: Method::Patch,
             middleware: ['auth'],
             withTrashed: true,
+        );
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Foo\Show\Controller::class,
+            name: 'foo.show',
+            uri: 'foo/{foo}',
+            httpMethod: Method::Get,
+            middleware: null,
+            withTrashed: false,
+        );
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Foo\Edit\Controller::class,
+            name: 'foo.edit',
+            uri: 'foo/{foo}/edit',
+            httpMethod: Method::Get,
+            middleware: null,
+            withoutMiddleware: [
+                GlobalMiddleware::class,
+            ],
         );
     }
 

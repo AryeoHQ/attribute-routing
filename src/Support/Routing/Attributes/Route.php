@@ -14,6 +14,7 @@ final readonly class Route implements RoutingAttribute
 {
     /**
      * @param  array<Method>  $methods
+     * @param  array<class-string>  $withoutMiddleware
      */
     public function __construct(
         public string $name,
@@ -21,6 +22,7 @@ final readonly class Route implements RoutingAttribute
         public Method|array $methods,
         public null|string $prefix = null,
         public null|bool $withTrashed = false,
+        public null|array $withoutMiddleware = [],
     ) {}
 
     /**

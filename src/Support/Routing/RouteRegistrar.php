@@ -99,7 +99,8 @@ class RouteRegistrar
                     ->prefix($routeDetails->prefix)
                     ->name($routeDetails->name)
                     ->when($routeDetails->withTrashed, fn (\Illuminate\Routing\Route $route) => $route->withTrashed())
-                    ->middleware($routeDetails->middleware);
+                    ->when($routeDetails->middleware, fn (\Illuminate\Routing\Route $route) => $route->middleware($routeDetails->middleware))
+                    ->when(count($routeDetails->withoutMiddleware) > 0, fn (\Illuminate\Routing\Route $route) => $route->withoutMiddleware($routeDetails->withoutMiddleware));
             }
         }
     }
@@ -123,7 +124,7 @@ class RouteRegistrar
             ->map(fn (ReflectionAttribute $attribute) => $attribute->newInstance());
         /** @var Attributes\Route $routeAttribute */
         $routeAttribute = $attributes->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Route);
-        /** @var Attributes\Middleware $middlewareAttribute */
+        /** @var Attributes\Middleware|null $middlewareAttribute */
         $middlewareAttribute = $attributes->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Middleware);
 
         /** @var class-string<object>|array{class-string<object>, non-empty-string} */
@@ -138,7 +139,8 @@ class RouteRegistrar
             'action' => $action,
             'prefix' => $routeAttribute->prefix,
             'withTrashed' => $routeAttribute->withTrashed,
-            'middleware' => $middlewareAttribute->getMiddleware(),
+            'withoutMiddleware' => $routeAttribute->withoutMiddleware,
+            'middleware' => $middlewareAttribute?->getMiddleware(),
         ];
     }
 }
