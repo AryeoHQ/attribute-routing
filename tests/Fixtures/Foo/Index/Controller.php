@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Fixtures\Foo;
+namespace Tests\Fixtures\Foo\Index;
 
 use Support\Routing\Attributes\Middleware;
 use Support\Routing\Attributes\Route;
@@ -12,7 +12,7 @@ class Controller
 {
     #[Middleware('auth')]
     #[Route(
-        name: 'foo',
+        name: 'foo.index',
         uri: 'foo',
         prefix: 'v1',
         methods: [Method::Put, Method::Patch],
