@@ -115,14 +115,19 @@ class RouteRegistrar
     /**
      * @param  array<ReflectionAttribute<RoutingAttribute>>  $attributes
      * @param  ReflectionClass<object>  $class
-     * @return object{name: string, uri: string, methods: array<Method>, action: class-string<object>|array{class-string<object>, non-empty-string}, prefix: ?string, withTrashed: ?bool, middleware: array<string>}
+     * @return object{name: ?string, uri: string, methods: array<Method>, action: class-string<object>|array{class-string<object>, non-empty-string}, prefix: ?string, withTrashed: ?bool, middleware: array<string>}
      */
     protected function getRouteDetails(array $attributes, ReflectionMethod $method, ReflectionClass $class): object
     {
         $attributes = collect($attributes)
             ->map(fn (ReflectionAttribute $attribute) => $attribute->newInstance());
-        /** @var Attributes\Route $routeAttribute */
-        $routeAttribute = $attributes->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Route);
+        /** @var Attributes\Route|Attributes\Get|Attributes\Post|Attributes\Put|Attributes\Patch|Attributes\Delete $routeAttribute */
+        $routeAttribute = $attributes->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Route
+            || $attribute instanceof Attributes\Get
+            || $attribute instanceof Attributes\Post
+            || $attribute instanceof Attributes\Put
+            || $attribute instanceof Attributes\Patch
+            || $attribute instanceof Attributes\Delete);
         /** @var Attributes\Middleware $middlewareAttribute */
         $middlewareAttribute = $attributes->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Middleware);
 

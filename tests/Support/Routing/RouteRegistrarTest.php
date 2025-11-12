@@ -124,4 +124,79 @@ class RouteRegistrarTest extends TestCase
 
         $this->routeRegistrar->registerFile($this->getFixture('Foo/MissingNamespace.php'));
     }
+
+    #[Test]
+    public function registrar_can_register_get_attribute(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('WithGetAttribute/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\WithGetAttribute\Controller::class,
+            name: 'resource.index',
+            uri: 'resource',
+            httpMethod: Method::Get,
+            middleware: ['auth'],
+            withTrashed: false,
+        );
+    }
+
+    #[Test]
+    public function registrar_can_register_post_attribute(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('WithPostAttribute/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\WithPostAttribute\Controller::class,
+            name: 'resource.store',
+            uri: 'resource',
+            httpMethod: Method::Post,
+            middleware: ['auth'],
+            withTrashed: false,
+        );
+    }
+
+    #[Test]
+    public function registrar_can_register_put_attribute(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('WithPutAttribute/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\WithPutAttribute\Controller::class,
+            name: 'resource.update',
+            uri: 'resource/{id}',
+            httpMethod: Method::Put,
+            middleware: ['auth'],
+            withTrashed: false,
+        );
+    }
+
+    #[Test]
+    public function registrar_can_register_patch_attribute(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('WithPatchAttribute/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\WithPatchAttribute\Controller::class,
+            name: 'resource.patch',
+            uri: 'resource/{id}',
+            httpMethod: Method::Patch,
+            middleware: ['auth'],
+            withTrashed: false,
+        );
+    }
+
+    #[Test]
+    public function registrar_can_register_delete_attribute(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('WithDeleteAttribute/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\WithDeleteAttribute\Controller::class,
+            name: 'resource.destroy',
+            uri: 'resource/{id}',
+            httpMethod: Method::Delete,
+            middleware: ['auth'],
+            withTrashed: false,
+        );
+    }
 }
