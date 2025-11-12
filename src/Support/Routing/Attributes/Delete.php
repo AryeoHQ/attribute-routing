@@ -8,7 +8,7 @@ use Attribute;
 use Support\Routing\Attributes\Contracts\RoutingAttribute;
 use Support\Routing\Enums\Method;
 
-#[Attribute(Attribute::TARGET_METHOD)]
+#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS)]
 final readonly class Delete implements RoutingAttribute
 {
     public function __construct(

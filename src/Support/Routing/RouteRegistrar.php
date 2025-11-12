@@ -84,6 +84,24 @@ class RouteRegistrar
      */
     protected function registerRoute(ReflectionClass $class): void
     {
+        $classAttributes = $this->getAttributesForTheClass($class);
+
+        if (count($classAttributes) > 0) {
+            $method = $class->getMethod('__invoke');
+            $routeDetails = $this->getRouteDetails($classAttributes, $method, $class);
+
+            foreach ($routeDetails->methods as $httpMethod) {
+                /** @var Method $httpMethod */
+                call_user_func([Route::class, $httpMethod->value], $routeDetails->uri, $routeDetails->action)
+                    ->prefix($routeDetails->prefix)
+                    ->name($routeDetails->name)
+                    ->when($routeDetails->withTrashed, fn (\Illuminate\Routing\Route $route) => $route->withTrashed())
+                    ->middleware($routeDetails->middleware);
+            }
+
+            return;
+        }
+
         foreach ($class->getMethods() as $method) {
             $attributes = $this->getAttributesForTheMethod($method);
 
@@ -102,6 +120,14 @@ class RouteRegistrar
                     ->middleware($routeDetails->middleware);
             }
         }
+    }
+
+    /**
+     * @return array<ReflectionAttribute<RoutingAttribute>>
+     */
+    protected function getAttributesForTheClass(ReflectionClass $class): array
+    {
+        return $class->getAttributes(Attributes\Contracts\RoutingAttribute::class, ReflectionAttribute::IS_INSTANCEOF);
     }
 
     /**

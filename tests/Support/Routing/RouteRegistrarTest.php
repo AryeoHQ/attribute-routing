@@ -199,4 +199,34 @@ class RouteRegistrarTest extends TestCase
             withTrashed: false,
         );
     }
+
+    #[Test]
+    public function registrar_can_register_get_attribute_on_invokable_controller(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('WithGetAttributeOnClass/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\WithGetAttributeOnClass\Controller::class,
+            name: 'invokable.resource.index',
+            uri: 'invokable-resource',
+            httpMethod: Method::Get,
+            middleware: ['auth'],
+            withTrashed: false,
+        );
+    }
+
+    #[Test]
+    public function registrar_can_register_post_attribute_on_invokable_controller(): void
+    {
+        $this->routeRegistrar->registerFile($this->getFixture('WithPostAttributeOnClass/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\WithPostAttributeOnClass\Controller::class,
+            name: 'invokable.resource.store',
+            uri: 'invokable-resource',
+            httpMethod: Method::Post,
+            middleware: ['auth'],
+            withTrashed: false,
+        );
+    }
 }

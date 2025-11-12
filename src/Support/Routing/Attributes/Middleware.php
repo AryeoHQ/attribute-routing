@@ -8,7 +8,7 @@ use Attribute;
 use Illuminate\Support\Arr;
 use Support\Routing\Attributes\Contracts\RoutingAttribute;
 
-#[Attribute(Attribute::TARGET_METHOD)]
+#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS)]
 final readonly class Middleware implements RoutingAttribute
 {
     /**
