@@ -88,8 +88,12 @@ class RoutingServiceProviderTest extends TestCase
     protected function resolveApplicationConfiguration($app)
     {
         parent::resolveApplicationConfiguration($app);
+
         $app['config']->set('routing.directories', [
-            __DIR__.'/Fixtures',
+            [
+                'path' => (string) __DIR__.'/Fixtures',
+                'middlewareGroup' => null,
+            ],
         ]);
     }
 

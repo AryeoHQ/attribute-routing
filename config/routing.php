@@ -8,6 +8,9 @@ return [
      * will automatically be registered.
      */
     'directories' => [
-        app_path('Http/Controllers'),
+        [
+            'path' => app_path('Http/Controllers'),
+            'middlewareGroup' => 'api',
+        ],
     ],
 ];

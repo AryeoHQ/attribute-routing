@@ -85,14 +85,17 @@ class RouteRegistrarTest extends TestCase
     #[Test]
     public function registrar_can_register_a_directory(): void
     {
-        $this->routeRegistrar->registerDirectory(__DIR__.'/../../Fixtures');
+        $this->routeRegistrar->registerDirectory([
+            'path' => __DIR__.'/../../Fixtures',
+            'middlewareGroup' => 'api',
+        ]);
 
         $this->assertRouteRegistered(
             controller: Fixtures\Bar\Controller::class,
             name: 'bar',
             uri: 'bar',
             httpMethod: Method::Get,
-            middleware: ['auth', 'throttle:100,1'],
+            middleware: ['api', 'auth', 'throttle:100,1'],
             withTrashed: false,
         );
 
@@ -101,7 +104,7 @@ class RouteRegistrarTest extends TestCase
             name: 'bar.show',
             uri: 'bar/{bar}',
             httpMethod: Method::Get,
-            middleware: ['auth', 'throttle:100,1'],
+            middleware: ['api', 'auth', 'throttle:100,1'],
             withTrashed: false,
         );
 
@@ -110,7 +113,7 @@ class RouteRegistrarTest extends TestCase
             name: 'foo.index',
             uri: 'v1/foo',
             httpMethod: Method::Put,
-            middleware: ['auth'],
+            middleware: ['api', 'auth'],
             withTrashed: true,
         );
 
@@ -119,7 +122,7 @@ class RouteRegistrarTest extends TestCase
             name: 'foo.index',
             uri: 'v1/foo',
             httpMethod: Method::Patch,
-            middleware: ['auth'],
+            middleware: ['api', 'auth'],
             withTrashed: true,
         );
     }
