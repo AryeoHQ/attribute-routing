@@ -5,12 +5,13 @@ declare(strict_types=1);
 return [
     /*
      * Controllers in these directories that have routing attributes
-     * will automatically be registered.
+     * will automatically be registered. Each directory can optionally
+     * specify a middleware group to be applied to all routes.
      */
     'directories' => [
         [
             'path' => app_path('Http/Controllers'),
-            'middlewareGroup' => 'api',
+            'middlewareGroup' => 'api', // Optional: middleware group name or null
         ],
     ],
 ];

@@ -22,10 +22,10 @@ return [
      */
     'directories' => [
         [
-            'path' => app_path('Domains'),
-            'middlewareGroup' => 'api',
+            'path' => app_path('Http/Controllers'),
+            'middlewareGroup' => 'api', // Optional: middleware group name or null
         ],
-        //...
+        //..
     ],
 ];
 ```
