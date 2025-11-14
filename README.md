@@ -21,8 +21,11 @@ return [
      * will automatically be registered.
      */
     'directories' => [
-        app_path('Domains'),
-        //...
+        [
+            'path' => app_path('Http/Controllers'),
+            'middlewareGroup' => 'api', // Optional: middleware group name or null
+        ],
+        //..
     ],
 ];
 ```

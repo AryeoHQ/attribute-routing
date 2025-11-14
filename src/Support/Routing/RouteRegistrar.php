@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Support\Routing;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use ReflectionAttribute;
 use ReflectionClass;
@@ -17,17 +19,19 @@ use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 class RouteRegistrar
 {
-    /**
-     * @var array<string>
-     */
-    protected array $middleware = [];
+    protected null|string $middlewareGroup = null;
 
-    public function registerDirectory(string $directory): void
+    /**
+     * @param  array{path: string, middlewareGroup: string|null}  $directory
+     */
+    public function registerDirectory(array $directory): void
     {
         $files = (new Finder)->files()
-            ->in($directory)
+            ->in($directory['path'])
             ->name('*Controller.php')
             ->sortByName();
+
+        $this->middlewareGroup = data_get($directory, 'middlewareGroup');
 
         foreach ($files as $file) {
             $this->registerFile($file);
@@ -125,7 +129,8 @@ class RouteRegistrar
         /** @var Attributes\Route $routeAttribute */
         $routeAttribute = $attributes->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Route);
         /** @var Attributes\Middleware|null $middlewareAttribute */
-        $middlewareAttribute = $attributes->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Middleware);
+        $middlewareAttribute = $attributes
+            ->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Middleware);
 
         /** @var class-string<object>|array{class-string<object>, non-empty-string} */
         $action = $method->getName() === '__invoke'
@@ -140,7 +145,21 @@ class RouteRegistrar
             'prefix' => $routeAttribute->prefix,
             'withTrashed' => $routeAttribute->withTrashed,
             'withoutMiddleware' => $routeAttribute->withoutMiddleware,
-            'middleware' => $middlewareAttribute?->getMiddleware(),
+            'middleware' => $this->getMiddlewareStack($attributes),
         ];
+    }
+
+    /**
+     * @param  Collection<int|string, RoutingAttribute>  $attributes
+     * @return array<string>
+     */
+    private function getMiddlewareStack(Collection $attributes): array
+    {
+        return $attributes
+            ->filter(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Middleware)
+            ->map(fn (Attributes\Middleware $attribute) => $attribute->getMiddleware())
+            ->when($this->middlewareGroup !== null, fn (Collection $collection) => $collection->prepend(Arr::wrap($this->middlewareGroup)))
+            ->flatten()
+            ->toArray();
     }
 }
