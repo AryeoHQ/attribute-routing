@@ -21,6 +21,8 @@ class RouteRegistrar
 {
     protected null|string $middlewareGroup = null;
 
+    protected null|string $prefix = null;
+
     /**
      * @param  array{path: string, middlewareGroup: string|null}  $directory
      */
@@ -32,6 +34,7 @@ class RouteRegistrar
             ->sortByName();
 
         $this->middlewareGroup = data_get($directory, 'middlewareGroup');
+        $this->prefix = data_get($directory, 'prefix');
 
         foreach ($files as $file) {
             $this->registerFile($file);
@@ -100,7 +103,7 @@ class RouteRegistrar
             foreach ($routeDetails->methods as $httpMethod) {
                 /** @var Method $httpMethod */
                 call_user_func([Route::class, $httpMethod->value], $routeDetails->uri, $routeDetails->action)
-                    ->prefix($routeDetails->prefix)
+                    ->when($routeDetails->prefix !== '', fn (\Illuminate\Routing\Route $route) => $route->prefix($routeDetails->prefix))
                     ->name($routeDetails->name)
                     ->when($routeDetails->withTrashed, fn (\Illuminate\Routing\Route $route) => $route->withTrashed())
                     ->when($routeDetails->middleware, fn (\Illuminate\Routing\Route $route) => $route->middleware($routeDetails->middleware))
@@ -128,9 +131,6 @@ class RouteRegistrar
             ->map(fn (ReflectionAttribute $attribute) => $attribute->newInstance());
         /** @var Attributes\Route $routeAttribute */
         $routeAttribute = $attributes->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Route);
-        /** @var Attributes\Middleware|null $middlewareAttribute */
-        $middlewareAttribute = $attributes
-            ->firstWhere(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Middleware);
 
         /** @var class-string<object>|array{class-string<object>, non-empty-string} */
         $action = $method->getName() === '__invoke'
@@ -142,7 +142,7 @@ class RouteRegistrar
             'uri' => $routeAttribute->uri,
             'methods' => $routeAttribute->getMethods(),
             'action' => $action,
-            'prefix' => $routeAttribute->prefix,
+            'prefix' => $this->getPrefix($routeAttribute),
             'withTrashed' => $routeAttribute->withTrashed,
             'withoutMiddleware' => $routeAttribute->withoutMiddleware,
             'middleware' => $this->getMiddlewareStack($attributes),
@@ -161,5 +161,10 @@ class RouteRegistrar
             ->when($this->middlewareGroup !== null, fn (Collection $collection) => $collection->prepend(Arr::wrap($this->middlewareGroup)))
             ->flatten()
             ->toArray();
+    }
+
+    private function getPrefix(Attributes\Route $routeAttribute): string
+    {
+        return implode('/', array_filter([$this->prefix, $routeAttribute->prefix], fn ($value) => $value !== ''));
     }
 }

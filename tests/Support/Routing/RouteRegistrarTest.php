@@ -83,6 +83,36 @@ class RouteRegistrarTest extends TestCase
     }
 
     #[Test]
+    public function registrar_can_register_a_route_with_a_prefix_in_config(): void
+    {
+        $this->routeRegistrar->registerDirectory([
+            'path' => __DIR__.'/../../Fixtures',
+            'middlewareGroup' => 'api',
+            'prefix' => 'api',
+        ]);
+
+        $this->routeRegistrar->registerFile($this->getFixture('Foo/Index/Controller.php'));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Foo\Index\Controller::class,
+            name: 'foo.index',
+            uri: 'api/v1/foo',
+            httpMethod: Method::Put,
+            middleware: ['auth'],
+            withTrashed: true,
+        );
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Foo\Index\Controller::class,
+            name: 'foo.index',
+            uri: 'api/v1/foo',
+            httpMethod: Method::Patch,
+            middleware: ['auth'],
+            withTrashed: true,
+        );
+    }
+
+    #[Test]
     public function registrar_can_register_a_directory(): void
     {
         $this->routeRegistrar->registerDirectory([

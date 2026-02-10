@@ -24,6 +24,7 @@ return [
         [
             'path' => app_path('Http/Controllers'),
             'middlewareGroup' => 'api', // Optional: middleware group name or null
+            // 'prefix' => 'v1' // Optional: prefix for all routes in this directory
         ],
         //..
     ],
@@ -45,7 +46,6 @@ class Controller
     #[Route(
         name: 'users.index',
         uri: 'users',
-        prefix: 'v1',
         methods: Method::Get,
     )]
     public function __invoke() {}
@@ -55,7 +55,6 @@ class Controller
 This attribute will automatically register this route:
 ```php
 Route::get('users', Controller::class)
-    ->prefix('v1')
     ->name('users.index');
 ```
 
@@ -73,7 +72,6 @@ class Controller
     #[Route(
         name: 'users.update',
         uri: 'users/{user}',
-        prefix: 'v1'
         methods: [Method::Put, Method::Patch],
     )]
     public function __invoke() {}
@@ -83,7 +81,6 @@ class Controller
 This attribute will automatically register this route:
 ```php
 Route::match(['PUT', 'PATCH'], 'users/{user}', Controller::class)
-    ->prefix('v1')
     ->name('users.update');
 ```
 
@@ -100,7 +97,6 @@ class Controller
     #[Route(
         name: 'users.index',
         uri: 'users',
-        prefix: 'v1'
         methods: Method::Get,
         withTrashed: true
     )]
@@ -111,7 +107,6 @@ class Controller
 This attribute will automatically register this route:
 ```php
 Route::get('users', Controller::class)
-    ->prefix('v1')
     ->name('users.index')
     ->withTrashed();
 ```
@@ -130,7 +125,6 @@ class Controller
     #[Route(
         name: 'users.index',
         uri: 'users',
-        prefix: 'v1'
         methods: Method::Get,
     )]
     #[Middleware([
@@ -144,7 +138,6 @@ class Controller
 This attribute will automatically register this route:
 ```php
 Route::get('users', Controller::class)
-    ->prefix('v1')
     ->name('users.index')
     ->middleware(['auth', 'throttle:100,1']);
 ```
