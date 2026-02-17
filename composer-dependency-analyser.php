@@ -4,4 +4,4 @@ use ShipMonk\ComposerDependencyAnalyser\Config\Configuration;
 
 $config = new Configuration;
 
-return $config;
+return $config->addPathToExclude(__DIR__.'/src/Tooling');;
