@@ -1,0 +1,5 @@
+services:
+    -
+        class: Tooling\PhpStan\Rules\InvokableControllerHasRouteAttribute
+        tags:
+            - phpstan.rules.rule
