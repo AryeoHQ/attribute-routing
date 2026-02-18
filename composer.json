@@ -22,12 +22,15 @@
         "symfony/http-foundation": "^7.3"
     },
     "require-dev": {
-        "aryeo/tooling-laravel": "0.0.9",
+        "aryeo/tooling-laravel": "0.0.15",
         "brianium/paratest": "^7.14",
+        "nikic/php-parser": "^5.6",
         "orchestra/testbench": "^10.6",
         "orchestra/testbench-core": "^10.7",
+        "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^12",
-        "shipmonk/composer-dependency-analyser": "^1.8"
+        "shipmonk/composer-dependency-analyser": "^1.8",
+        "rector/rector": "^2.1"
     },
     "repositories": {
         "tooling-laravel": {
@@ -37,7 +40,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Support\\": "src/Support/"
+            "Support\\": "src/Support/",
+            "Tooling\\": "src/Tooling/"
         }
     },
     "autoload-dev": {
@@ -60,6 +64,12 @@
             "providers": [
                 "Support\\Routing\\RoutingServiceProvider"
             ]
+        },
+        "tooling": {
+            "phpstan": "tooling/phpstan/rules.neon",
+            "rector": {
+                "rules": "tooling/rector/rules.php"
+            }
         }
     },
     "minimum-stability": "stable",
