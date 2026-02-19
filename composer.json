@@ -22,7 +22,7 @@
         "symfony/http-foundation": "^7.3"
     },
     "require-dev": {
-        "aryeo/tooling-laravel": "dev-rule-consistency-and-feature-improvements",
+        "aryeo/tooling-laravel": "0.0.17",
         "brianium/paratest": "^7.14",
         "nikic/php-parser": "^5.6",
         "orchestra/testbench": "^10.6",
