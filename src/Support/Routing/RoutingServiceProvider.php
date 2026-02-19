@@ -10,6 +10,8 @@ class RoutingServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        $this->bootViews();
+
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../../../config/routing.php' => config_path('routing.php'),
@@ -17,6 +19,11 @@ class RoutingServiceProvider extends ServiceProvider
         }
 
         $this->registerRoutes();
+    }
+
+    private function bootViews(): void
+    {
+        $this->loadViewsFrom(__DIR__.'/../../../resources/views/rector/rules', 'attribute-routing.rector.rules.samples');
     }
 
     public function register(): void
