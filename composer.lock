@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d57bcb0c7ff860d1b42fa9376dd29662",
+    "content-hash": "7edf09531740494053c06ccdad2469af",
     "packages": [
         {
             "name": "brick/math",
@@ -5798,16 +5798,16 @@
     "packages-dev": [
         {
             "name": "aryeo/tooling-laravel",
-            "version": "0.0.15",
+            "version": "dev-rule-consistency-and-feature-improvements",
             "source": {
                 "type": "git",
                 "url": "https://github.com/AryeoHQ/tooling-laravel.git",
-                "reference": "8ebae9309cfa786b8826bb6e78e0a1da65a8b91f"
+                "reference": "0bb6ab458bd4b7feeed37c3c64ed69a9bf98b59a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AryeoHQ/tooling-laravel/zipball/8ebae9309cfa786b8826bb6e78e0a1da65a8b91f",
-                "reference": "8ebae9309cfa786b8826bb6e78e0a1da65a8b91f",
+                "url": "https://api.github.com/repos/AryeoHQ/tooling-laravel/zipball/0bb6ab458bd4b7feeed37c3c64ed69a9bf98b59a",
+                "reference": "0bb6ab458bd4b7feeed37c3c64ed69a9bf98b59a",
                 "shasum": ""
             },
             "require": {
@@ -5876,10 +5876,10 @@
             ],
             "description": "Development tooling for Laravel",
             "support": {
-                "source": "https://github.com/AryeoHQ/tooling-laravel/tree/0.0.15",
+                "source": "https://github.com/AryeoHQ/tooling-laravel/tree/rule-consistency-and-feature-improvements",
                 "issues": "https://github.com/AryeoHQ/tooling-laravel/issues"
             },
-            "time": "2026-02-17T20:46:34+00:00"
+            "time": "2026-02-19T14:13:17+00:00"
         },
         {
             "name": "brianium/paratest",
@@ -8919,16 +8919,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "12.5.12",
+            "version": "12.5.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "418e06b3b46b0d54bad749ff4907fc7dfb530199"
+                "reference": "47283cfd98d553edcb1353591f4e255dc1bb61f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/418e06b3b46b0d54bad749ff4907fc7dfb530199",
-                "reference": "418e06b3b46b0d54bad749ff4907fc7dfb530199",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/47283cfd98d553edcb1353591f4e255dc1bb61f0",
+                "reference": "47283cfd98d553edcb1353591f4e255dc1bb61f0",
                 "shasum": ""
             },
             "require": {
@@ -8997,7 +8997,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.5.12"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.5.14"
             },
             "funding": [
                 {
@@ -9021,7 +9021,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-16T08:34:36+00:00"
+            "time": "2026-02-18T12:38:40+00:00"
         },
         {
             "name": "psy/psysh",
@@ -10841,7 +10841,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "aryeo/tooling-laravel": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

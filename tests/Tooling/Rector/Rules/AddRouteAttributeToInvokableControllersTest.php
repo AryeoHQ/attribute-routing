@@ -33,12 +33,12 @@ class AddRouteAttributeToInvokableControllersTest extends TestCase
 
         $rule = $this->resolveRule(AddRouteAttributeToInvokableControllers::class);
 
-        $this->assertFalse($rule->hasAttribute($invokeMethod, Route::class));
+        $this->assertFalse($this->hasAttribute($invokeMethod, Route::class));
 
         $result = $rule->refactor($classNode);
 
         $this->assertInstanceOf(Class_::class, $result);
-        $this->assertTrue($rule->hasAttribute($result->getMethod('__invoke'), Route::class));
+        $this->assertTrue($this->hasAttribute($result->getMethod('__invoke'), Route::class));
     }
 
     #[Test]
@@ -49,7 +49,7 @@ class AddRouteAttributeToInvokableControllersTest extends TestCase
 
         $rule = $this->resolveRule(AddRouteAttributeToInvokableControllers::class);
 
-        $this->assertTrue($rule->hasAttribute($invokeMethod, Route::class));
+        $this->assertTrue($this->hasAttribute($invokeMethod, Route::class));
 
         $result = $rule->refactor($classNode);
 

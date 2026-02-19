@@ -9,6 +9,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use Support\Routing\Attributes\Route;
 use Tooling\Rector\Rules\Definitions\Attributes\Definition;
+use Tooling\Rector\Rules\Samples\Attributes\Sample;
 use Tooling\Rules\Attributes\NodeType;
 
 /**
@@ -16,6 +17,7 @@ use Tooling\Rules\Attributes\NodeType;
  */
 #[Definition('Add the Route attribute to the invokable controller class')]
 #[NodeType(Class_::class)]
+#[Sample('attribute-routing.rector.rules.samples')]
 final class AddRouteAttributeToInvokableControllers extends Rule
 {
     protected null|ClassMethod $invokeMethod = null;
@@ -34,11 +36,19 @@ final class AddRouteAttributeToInvokableControllers extends Rule
     {
         $node->stmts = collect($node->stmts)
             ->map(function (Node $stmt) {
-                if ($stmt instanceof ClassMethod && $stmt->name->toString() === '__invoke') {
-                    return $this->ensureAttributeIsDefined($this->invokeMethod, Route::class);
+                if (! $stmt instanceof ClassMethod) {
+                    return $stmt;
                 }
 
-                return $stmt;
+                if ($stmt->name->toString() !== '__invoke') {
+                    return $stmt;
+                }
+
+                if ($this->hasAttribute($stmt, Route::class)) {
+                    return $stmt;
+                }
+
+                return $this->addAttribute($stmt, Route::class);
             })
             ->toArray();
 
