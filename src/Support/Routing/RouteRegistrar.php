@@ -23,8 +23,10 @@ class RouteRegistrar
 
     protected null|string $prefix = null;
 
+    protected null|string $domain = null;
+
     /**
-     * @param  array{path: string, middlewareGroup: string|null}  $directory
+     * @param  array{path: string, middlewareGroup: string|null, domain: string|null}  $directory
      */
     public function registerDirectory(array $directory): void
     {
@@ -35,6 +37,7 @@ class RouteRegistrar
 
         $this->middlewareGroup = data_get($directory, 'middlewareGroup');
         $this->prefix = data_get($directory, 'prefix');
+        $this->domain = data_get($directory, 'domain');
 
         foreach ($files as $file) {
             $this->registerFile($file);
@@ -104,6 +107,7 @@ class RouteRegistrar
                 /** @var Method $httpMethod */
                 call_user_func([Route::class, $httpMethod->value], $routeDetails->uri, $routeDetails->action)
                     ->when($routeDetails->prefix !== '', fn (\Illuminate\Routing\Route $route) => $route->prefix($routeDetails->prefix))
+                    ->when($this->domain !== null, fn (\Illuminate\Routing\Route $route) => $route->setAction(array_merge($route->getAction(), ['domain' => $this->domain])))
                     ->name($routeDetails->name)
                     ->when($routeDetails->withTrashed, fn (\Illuminate\Routing\Route $route) => $route->withTrashed())
                     ->when($routeDetails->middleware, fn (\Illuminate\Routing\Route $route) => $route->middleware($routeDetails->middleware))
