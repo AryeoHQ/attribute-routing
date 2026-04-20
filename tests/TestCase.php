@@ -100,6 +100,17 @@ abstract class TestCase extends Testbench\TestCase
         return $this;
     }
 
+    public function assertRouteHasNoDomain(string $name): self
+    {
+        $route = collect(app()->router->getRoutes())
+            ->first(fn (Route $route) => $route->getName() === $name);
+
+        $this->assertNotNull($route, "Route {$name} was not found");
+        $this->assertNull($route->getDomain(), "Route {$name} should not have a domain but has '{$route->getDomain()}'");
+
+        return $this;
+    }
+
     public function assertRouteNotRegistered(
         string $controller,
         string $name,

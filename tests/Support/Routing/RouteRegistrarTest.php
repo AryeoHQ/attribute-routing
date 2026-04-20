@@ -186,6 +186,41 @@ class RouteRegistrarTest extends TestCase
     }
 
     #[Test]
+    public function registrar_does_not_set_domain_when_null(): void
+    {
+        $this->routeRegistrar->registerDirectory([
+            'path' => __DIR__.'/../../Fixtures',
+            'middlewareGroup' => 'api',
+            'domain' => null,
+        ]);
+
+        $this->assertRouteHasNoDomain('bar');
+    }
+
+    #[Test]
+    public function registrar_does_not_set_domain_when_empty_string(): void
+    {
+        $this->routeRegistrar->registerDirectory([
+            'path' => __DIR__.'/../../Fixtures',
+            'middlewareGroup' => 'api',
+            'domain' => '',
+        ]);
+
+        $this->assertRouteHasNoDomain('bar');
+    }
+
+    #[Test]
+    public function registrar_does_not_set_domain_when_omitted(): void
+    {
+        $this->routeRegistrar->registerDirectory([
+            'path' => __DIR__.'/../../Fixtures',
+            'middlewareGroup' => 'api',
+        ]);
+
+        $this->assertRouteHasNoDomain('bar');
+    }
+
+    #[Test]
     public function it_throws_file_not_found_exception(): void
     {
         $this->expectException(FileNotFoundException::class);

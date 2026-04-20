@@ -110,7 +110,7 @@ class RouteRegistrar
                 /** @var Method $httpMethod */
                 call_user_func([Route::class, $httpMethod->value], $routeDetails->uri, $routeDetails->action)
                     ->when($routeDetails->prefix !== '', fn (\Illuminate\Routing\Route $route) => $route->prefix($routeDetails->prefix))
-                    ->when($this->domain, fn (\Illuminate\Routing\Route $route) => $route->domain($this->domain))
+                    ->when(filled($this->domain), fn (\Illuminate\Routing\Route $route) => $route->domain($this->domain))
                     ->name($routeDetails->name)
                     ->when($routeDetails->withTrashed, fn (\Illuminate\Routing\Route $route) => $route->withTrashed())
                     ->when($routeDetails->middleware, fn (\Illuminate\Routing\Route $route) => $route->middleware($routeDetails->middleware))
