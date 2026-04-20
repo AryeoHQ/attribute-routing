@@ -50,17 +50,7 @@ class RoutingServiceProvider extends ServiceProvider
      */
     private function getRouteDirectories(): array
     {
-        /** @var array<array{path: string, middlewareGroup?: string|null, prefix?: string|null, domain?: string|null}> */
-        $directories = config('routing.directories');
-
-        return array_map(
-            fn (array $directory) => new DirectoryConfig(
-                path: $directory['path'],
-                middlewareGroup: $directory['middlewareGroup'] ?? null,
-                prefix: $directory['prefix'] ?? null,
-                domain: $directory['domain'] ?? null,
-            ),
-            $directories,
-        );
+        /** @var array<DirectoryConfig> */
+        return config('routing.directories');
     }
 }

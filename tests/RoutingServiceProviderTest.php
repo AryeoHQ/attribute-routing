@@ -5,6 +5,7 @@ namespace Tests;
 use Orchestra\Testbench\Attributes\DefineEnvironment;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use Support\Routing\DirectoryConfig;
 use Support\Routing\Enums\Method;
 use Support\Routing\RouteRegistrar;
 use Support\Routing\RoutingServiceProvider;
@@ -108,11 +109,10 @@ class RoutingServiceProviderTest extends TestCase
     protected function withDomainConfig($app): void
     {
         $app['config']->set('routing.directories', [
-            [
-                'path' => (string) __DIR__.'/Fixtures',
-                'middlewareGroup' => null,
-                'domain' => 'api.example.com',
-            ],
+            new DirectoryConfig(
+                path: (string) __DIR__.'/Fixtures',
+                domain: 'api.example.com',
+            ),
         ]);
     }
 
@@ -125,10 +125,9 @@ class RoutingServiceProviderTest extends TestCase
         parent::resolveApplicationConfiguration($app);
 
         $app['config']->set('routing.directories', [
-            [
-                'path' => (string) __DIR__.'/Fixtures',
-                'middlewareGroup' => null,
-            ],
+            new DirectoryConfig(
+                path: (string) __DIR__.'/Fixtures',
+            ),
         ]);
     }
 

@@ -15,35 +15,37 @@ php artisan vendor:publish --provider="Support\Routing\RoutingServiceProvider" -
 ```
 
 ```php
+use Support\Routing\DirectoryConfig;
+
 return [
-    /*
-     * Controllers in these directories that have routing attributes
-     * will automatically be registered.
-     */
     'directories' => [
-        [
-            'path' => app_path('Http/Controllers'),
-            'middlewareGroup' => 'api', // Optional: middleware group name or null
-            // 'prefix' => 'v1', // Optional: prefix for all routes in this directory
-            // 'domain' => 'api.example.com', // Optional: restrict routes to a specific domain
-        ],
-        //..
+        new DirectoryConfig(
+            path: app_path('Http/Controllers'),
+            middlewareGroup: 'api',
+        ),
     ],
 ];
 ```
 
+Each `DirectoryConfig` accepts the following parameters:
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `path` | `string` | *(required)* | Directory to scan for controllers |
+| `middlewareGroup` | `?string` | `null` | Middleware group applied to all routes |
+| `prefix` | `?string` | `null` | URI prefix for all routes |
+| `domain` | `?string` | `null` | Restrict routes to a specific domain |
+
 ### Domain restriction
 
-You can restrict all routes in a directory to a specific domain by setting the `domain` option:
+You can restrict all routes in a directory to a specific domain:
 
 ```php
-'directories' => [
-    [
-        'path' => app_path('Http/Api/V2'),
-        'middlewareGroup' => 'api',
-        'domain' => 'api.example.com',
-    ],
-],
+new DirectoryConfig(
+    path: app_path('Http/Api/V2'),
+    middlewareGroup: 'api',
+    domain: 'api.example.com',
+),
 ```
 
 All routes registered from that directory will only respond to requests on `api.example.com`.
