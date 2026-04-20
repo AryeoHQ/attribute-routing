@@ -40,20 +40,17 @@ class RoutingServiceProvider extends ServiceProvider
         $routeRegistrar = app()->make(RouteRegistrar::class);
 
         collect($this->getRouteDirectories())
-            ->each(function (array $directory) use ($routeRegistrar) {
-                /** @var array{path: string, middlewareGroup: string|null} $directory */
-                $routeRegistrar->registerDirectory($directory);
-            });
+            ->each(fn (DirectoryConfig $directory) => $routeRegistrar->registerDirectory($directory));
 
         return true;
     }
 
     /**
-     * @return array<array{path: string, middlewareGroup: ?string}>
+     * @return array<DirectoryConfig>
      */
     private function getRouteDirectories(): array
     {
-        /** @var array<array{path: string, middlewareGroup: ?string}> */
+        /** @var array<DirectoryConfig> */
         return config('routing.directories');
     }
 }

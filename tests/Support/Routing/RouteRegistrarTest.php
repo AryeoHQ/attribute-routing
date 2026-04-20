@@ -6,6 +6,7 @@ namespace Tests\Support\Routing;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use Support\Routing\DirectoryConfig;
 use Support\Routing\Enums\Method;
 use Support\Routing\Exceptions\NamespaceNotFound;
 use Support\Routing\RouteRegistrar;
@@ -85,11 +86,11 @@ class RouteRegistrarTest extends TestCase
     #[Test]
     public function registrar_can_register_a_route_with_a_prefix_in_config(): void
     {
-        $this->routeRegistrar->registerDirectory([
-            'path' => __DIR__.'/../../Fixtures',
-            'middlewareGroup' => 'api',
-            'prefix' => 'api',
-        ]);
+        $this->routeRegistrar->registerDirectory(new DirectoryConfig(
+            path: __DIR__.'/../../Fixtures',
+            middlewareGroup: 'api',
+            prefix: 'api',
+        ));
 
         $this->routeRegistrar->registerFile($this->getFixture('Foo/Index/Controller.php'));
 
@@ -115,10 +116,10 @@ class RouteRegistrarTest extends TestCase
     #[Test]
     public function registrar_can_register_a_directory(): void
     {
-        $this->routeRegistrar->registerDirectory([
-            'path' => __DIR__.'/../../Fixtures',
-            'middlewareGroup' => 'api',
-        ]);
+        $this->routeRegistrar->registerDirectory(new DirectoryConfig(
+            path: __DIR__.'/../../Fixtures',
+            middlewareGroup: 'api',
+        ));
 
         $this->assertRouteRegistered(
             controller: Fixtures\Bar\Controller::class,
@@ -155,6 +156,69 @@ class RouteRegistrarTest extends TestCase
             middleware: ['api', 'auth'],
             withTrashed: true,
         );
+    }
+
+    #[Test]
+    public function registrar_can_register_a_route_with_a_domain_in_config(): void
+    {
+        $this->routeRegistrar->registerDirectory(new DirectoryConfig(
+            path: __DIR__.'/../../Fixtures',
+            middlewareGroup: 'api',
+            domain: 'api.example.com',
+        ));
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Bar\Controller::class,
+            name: 'bar',
+            uri: 'bar',
+            httpMethod: Method::Get,
+            middleware: ['api', 'auth', 'throttle:100,1'],
+            domain: 'api.example.com',
+        );
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Foo\Show\Controller::class,
+            name: 'foo.show',
+            uri: 'foo/{foo}',
+            httpMethod: Method::Get,
+            middleware: ['api'],
+            domain: 'api.example.com',
+        );
+    }
+
+    #[Test]
+    public function registrar_does_not_set_domain_when_null(): void
+    {
+        $this->routeRegistrar->registerDirectory(new DirectoryConfig(
+            path: __DIR__.'/../../Fixtures',
+            middlewareGroup: 'api',
+            domain: null,
+        ));
+
+        $this->assertRouteHasNoDomain('bar');
+    }
+
+    #[Test]
+    public function registrar_does_not_set_domain_when_empty_string(): void
+    {
+        $this->routeRegistrar->registerDirectory(new DirectoryConfig(
+            path: __DIR__.'/../../Fixtures',
+            middlewareGroup: 'api',
+            domain: '',
+        ));
+
+        $this->assertRouteHasNoDomain('bar');
+    }
+
+    #[Test]
+    public function registrar_does_not_set_domain_when_omitted(): void
+    {
+        $this->routeRegistrar->registerDirectory(new DirectoryConfig(
+            path: __DIR__.'/../../Fixtures',
+            middlewareGroup: 'api',
+        ));
+
+        $this->assertRouteHasNoDomain('bar');
     }
 
     #[Test]

@@ -19,22 +19,16 @@ use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 class RouteRegistrar
 {
-    protected null|string $middlewareGroup = null;
+    protected ?DirectoryConfig $directory = null;
 
-    protected null|string $prefix = null;
-
-    /**
-     * @param  array{path: string, middlewareGroup: string|null}  $directory
-     */
-    public function registerDirectory(array $directory): void
+    public function registerDirectory(DirectoryConfig $directory): void
     {
         $files = (new Finder)->files()
-            ->in($directory['path'])
+            ->in($directory->path)
             ->name('*Controller.php')
             ->sortByName();
 
-        $this->middlewareGroup = data_get($directory, 'middlewareGroup');
-        $this->prefix = data_get($directory, 'prefix');
+        $this->directory = $directory;
 
         foreach ($files as $file) {
             $this->registerFile($file);
@@ -104,6 +98,7 @@ class RouteRegistrar
                 /** @var Method $httpMethod */
                 call_user_func([Route::class, $httpMethod->value], $routeDetails->uri, $routeDetails->action)
                     ->when($routeDetails->prefix !== '', fn (\Illuminate\Routing\Route $route) => $route->prefix($routeDetails->prefix))
+                    ->when(filled($this->directory?->domain), fn (\Illuminate\Routing\Route $route) => $route->domain($this->directory->domain))
                     ->name($routeDetails->name)
                     ->when($routeDetails->withTrashed, fn (\Illuminate\Routing\Route $route) => $route->withTrashed())
                     ->when($routeDetails->middleware, fn (\Illuminate\Routing\Route $route) => $route->middleware($routeDetails->middleware))
@@ -123,9 +118,8 @@ class RouteRegistrar
     /**
      * @param  array<ReflectionAttribute<RoutingAttribute>>  $attributes
      * @param  ReflectionClass<object>  $class
-     * @return object{name: string, uri: string, methods: array<Method>, action: class-string<object>|array{class-string<object>, non-empty-string}, prefix: ?string, withTrashed: ?bool, middleware: array<string>}
      */
-    protected function getRouteDetails(array $attributes, ReflectionMethod $method, ReflectionClass $class): object
+    protected function getRouteDetails(array $attributes, ReflectionMethod $method, ReflectionClass $class): RouteDetails
     {
         $attributes = collect($attributes)
             ->map(fn (ReflectionAttribute $attribute) => $attribute->newInstance());
@@ -137,16 +131,16 @@ class RouteRegistrar
             ? $class->getName()
             : [$class->getName(), $method->getName()];
 
-        return (object) [
-            'name' => $routeAttribute->name,
-            'uri' => $routeAttribute->uri,
-            'methods' => $routeAttribute->getMethods(),
-            'action' => $action,
-            'prefix' => $this->getPrefix($routeAttribute),
-            'withTrashed' => $routeAttribute->withTrashed,
-            'withoutMiddleware' => $routeAttribute->withoutMiddleware,
-            'middleware' => $this->getMiddlewareStack($attributes),
-        ];
+        return new RouteDetails(
+            name: $routeAttribute->name,
+            uri: $routeAttribute->uri,
+            methods: $routeAttribute->getMethods(),
+            action: $action,
+            prefix: $this->getPrefix($routeAttribute),
+            withTrashed: $routeAttribute->withTrashed,
+            withoutMiddleware: $routeAttribute->withoutMiddleware,
+            middleware: $this->getMiddlewareStack($attributes),
+        );
     }
 
     /**
@@ -158,13 +152,13 @@ class RouteRegistrar
         return $attributes
             ->filter(fn (RoutingAttribute $attribute) => $attribute instanceof Attributes\Middleware)
             ->map(fn (Attributes\Middleware $attribute) => $attribute->getMiddleware())
-            ->when($this->middlewareGroup !== null, fn (Collection $collection) => $collection->prepend(Arr::wrap($this->middlewareGroup)))
+            ->when($this->directory?->middlewareGroup !== null, fn (Collection $collection) => $collection->prepend(Arr::wrap($this->directory->middlewareGroup)))
             ->flatten()
             ->toArray();
     }
 
     private function getPrefix(Attributes\Route $routeAttribute): string
     {
-        return implode('/', array_filter([$this->prefix, $routeAttribute->prefix], fn ($value) => $value !== ''));
+        return implode('/', array_filter([$this->directory?->prefix, $routeAttribute->prefix], fn ($value) => $value !== ''));
     }
 }

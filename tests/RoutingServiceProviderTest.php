@@ -2,8 +2,10 @@
 
 namespace Tests;
 
+use Orchestra\Testbench\Attributes\DefineEnvironment;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use Support\Routing\DirectoryConfig;
 use Support\Routing\Enums\Method;
 use Support\Routing\RouteRegistrar;
 use Support\Routing\RoutingServiceProvider;
@@ -81,6 +83,39 @@ class RoutingServiceProviderTest extends TestCase
         );
     }
 
+    #[Test]
+    #[DefineEnvironment('withDomainConfig')]
+    public function it_registers_routes_with_domain_from_config(): void
+    {
+        $this->assertRouteRegistered(
+            controller: Fixtures\Bar\Controller::class,
+            name: 'bar',
+            uri: 'bar',
+            httpMethod: Method::Get,
+            middleware: ['auth', 'throttle:100,1'],
+            domain: 'api.example.com',
+        );
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Foo\Show\Controller::class,
+            name: 'foo.show',
+            uri: 'foo/{foo}',
+            httpMethod: Method::Get,
+            middleware: null,
+            domain: 'api.example.com',
+        );
+    }
+
+    protected function withDomainConfig($app): void
+    {
+        $app['config']->set('routing.directories', [
+            new DirectoryConfig(
+                path: (string) __DIR__.'/Fixtures',
+                domain: 'api.example.com',
+            ),
+        ]);
+    }
+
     /**
      * @param  \Illuminate\Foundation\Application  $app
      * @return void
@@ -90,10 +125,9 @@ class RoutingServiceProviderTest extends TestCase
         parent::resolveApplicationConfiguration($app);
 
         $app['config']->set('routing.directories', [
-            [
-                'path' => (string) __DIR__.'/Fixtures',
-                'middlewareGroup' => null,
-            ],
+            new DirectoryConfig(
+                path: (string) __DIR__.'/Fixtures',
+            ),
         ]);
     }
 

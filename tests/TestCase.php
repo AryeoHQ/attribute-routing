@@ -50,11 +50,12 @@ abstract class TestCase extends Testbench\TestCase
         string|array|null $middleware,
         null|bool $withTrashed = false,
         null|array $withoutMiddleware = [],
+        null|string $domain = null,
     ): self {
         $routes = collect(app()->router->getRoutes());
 
         $routeRegistered = $routes
-            ->contains(function (Route $route) use ($controller, $name, $uri, $httpMethod, $middleware, $withTrashed, $withoutMiddleware) {
+            ->contains(function (Route $route) use ($controller, $name, $uri, $httpMethod, $middleware, $withTrashed, $withoutMiddleware, $domain) {
                 $routeController = $route->getAction(0) ?? $route->getController() !== null
                     ? get_class($route->getController())
                     : null;
@@ -87,10 +88,25 @@ abstract class TestCase extends Testbench\TestCase
                     return false;
                 }
 
+                if ($domain !== null && $route->getDomain() !== $domain) {
+                    return false;
+                }
+
                 return true;
             });
 
         $this->assertTrue($routeRegistered, "`The controller {$controller} was not registered with the expected details`");
+
+        return $this;
+    }
+
+    public function assertRouteHasNoDomain(string $name): self
+    {
+        $route = collect(app()->router->getRoutes())
+            ->first(fn (Route $route) => $route->getName() === $name);
+
+        $this->assertNotNull($route, "Route {$name} was not found");
+        $this->assertNull($route->getDomain(), "Route {$name} should not have a domain but has '{$route->getDomain()}'");
 
         return $this;
     }
