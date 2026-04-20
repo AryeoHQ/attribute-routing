@@ -26,7 +26,7 @@ class RouteRegistrar
     protected null|string $domain = null;
 
     /**
-     * @param  array{path: string, middlewareGroup: string|null, domain: string|null}  $directory
+     * @param  array{path: string, middlewareGroup?: string|null, prefix?: string|null, domain?: string|null}  $directory
      */
     public function registerDirectory(array $directory): void
     {
@@ -35,8 +35,11 @@ class RouteRegistrar
             ->name('*Controller.php')
             ->sortByName();
 
+        /** @var string|null */
         $this->middlewareGroup = data_get($directory, 'middlewareGroup');
+        /** @var string|null */
         $this->prefix = data_get($directory, 'prefix');
+        /** @var string|null */
         $this->domain = data_get($directory, 'domain');
 
         foreach ($files as $file) {

@@ -41,7 +41,7 @@ class RoutingServiceProvider extends ServiceProvider
 
         collect($this->getRouteDirectories())
             ->each(function (array $directory) use ($routeRegistrar) {
-                /** @var array{path: string, middlewareGroup: string|null} $directory */
+                /** @var array{path: string, middlewareGroup?: string|null, prefix?: string|null, domain?: string|null} $directory */
                 $routeRegistrar->registerDirectory($directory);
             });
 
@@ -49,11 +49,11 @@ class RoutingServiceProvider extends ServiceProvider
     }
 
     /**
-     * @return array<array{path: string, middlewareGroup: ?string}>
+     * @return array<array{path: string, middlewareGroup?: string|null, prefix?: string|null, domain?: string|null}>
      */
     private function getRouteDirectories(): array
     {
-        /** @var array<array{path: string, middlewareGroup: ?string}> */
+        /** @var array<array{path: string, middlewareGroup?: string|null, prefix?: string|null, domain?: string|null}> */
         return config('routing.directories');
     }
 }
