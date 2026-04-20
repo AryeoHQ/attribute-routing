@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Orchestra\Testbench\Attributes\DefineEnvironment;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Support\Routing\Enums\Method;
@@ -79,6 +80,40 @@ class RoutingServiceProviderTest extends TestCase
                 GlobalMiddleware::class,
             ],
         );
+    }
+
+    #[Test]
+    #[DefineEnvironment('withDomainConfig')]
+    public function it_registers_routes_with_domain_from_config(): void
+    {
+        $this->assertRouteRegistered(
+            controller: Fixtures\Bar\Controller::class,
+            name: 'bar',
+            uri: 'bar',
+            httpMethod: Method::Get,
+            middleware: ['auth', 'throttle:100,1'],
+            domain: 'api.example.com',
+        );
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Foo\Show\Controller::class,
+            name: 'foo.show',
+            uri: 'foo/{foo}',
+            httpMethod: Method::Get,
+            middleware: null,
+            domain: 'api.example.com',
+        );
+    }
+
+    protected function withDomainConfig($app): void
+    {
+        $app['config']->set('routing.directories', [
+            [
+                'path' => (string) __DIR__.'/Fixtures',
+                'middlewareGroup' => null,
+                'domain' => 'api.example.com',
+            ],
+        ]);
     }
 
     /**
