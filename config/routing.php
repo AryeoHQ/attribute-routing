@@ -13,6 +13,7 @@ return [
             'path' => app_path('Http/Controllers'),
             'middlewareGroup' => 'api', // Optional: middleware group name or null
             //'prefix' => 'v1', // Optional: prefix for all routes in this directory
+            //'domain' => 'api.example.com', // Optional: restrict routes to a specific domain
         ],
     ],
 ];

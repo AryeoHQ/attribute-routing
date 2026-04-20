@@ -24,12 +24,29 @@ return [
         [
             'path' => app_path('Http/Controllers'),
             'middlewareGroup' => 'api', // Optional: middleware group name or null
-            // 'prefix' => 'v1' // Optional: prefix for all routes in this directory
+            // 'prefix' => 'v1', // Optional: prefix for all routes in this directory
+            // 'domain' => 'api.example.com', // Optional: restrict routes to a specific domain
         ],
         //..
     ],
 ];
 ```
+
+### Domain restriction
+
+You can restrict all routes in a directory to a specific domain by setting the `domain` option:
+
+```php
+'directories' => [
+    [
+        'path' => app_path('Http/Api/V2'),
+        'middlewareGroup' => 'api',
+        'domain' => 'api.example.com',
+    ],
+],
+```
+
+All routes registered from that directory will only respond to requests on `api.example.com`.
 
 ## Usage
 
