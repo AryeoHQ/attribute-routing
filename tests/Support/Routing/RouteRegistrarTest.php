@@ -158,6 +158,34 @@ class RouteRegistrarTest extends TestCase
     }
 
     #[Test]
+    public function registrar_can_register_a_route_with_a_domain_in_config(): void
+    {
+        $this->routeRegistrar->registerDirectory([
+            'path' => __DIR__.'/../../Fixtures',
+            'middlewareGroup' => 'api',
+            'domain' => 'api.example.com',
+        ]);
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Bar\Controller::class,
+            name: 'bar',
+            uri: 'bar',
+            httpMethod: Method::Get,
+            middleware: ['api', 'auth', 'throttle:100,1'],
+            domain: 'api.example.com',
+        );
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Foo\Show\Controller::class,
+            name: 'foo.show',
+            uri: 'foo/{foo}',
+            httpMethod: Method::Get,
+            middleware: ['api'],
+            domain: 'api.example.com',
+        );
+    }
+
+    #[Test]
     public function it_throws_file_not_found_exception(): void
     {
         $this->expectException(FileNotFoundException::class);

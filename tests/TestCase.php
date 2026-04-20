@@ -50,11 +50,12 @@ abstract class TestCase extends Testbench\TestCase
         string|array|null $middleware,
         null|bool $withTrashed = false,
         null|array $withoutMiddleware = [],
+        null|string $domain = null,
     ): self {
         $routes = collect(app()->router->getRoutes());
 
         $routeRegistered = $routes
-            ->contains(function (Route $route) use ($controller, $name, $uri, $httpMethod, $middleware, $withTrashed, $withoutMiddleware) {
+            ->contains(function (Route $route) use ($controller, $name, $uri, $httpMethod, $middleware, $withTrashed, $withoutMiddleware, $domain) {
                 $routeController = $route->getAction(0) ?? $route->getController() !== null
                     ? get_class($route->getController())
                     : null;
@@ -84,6 +85,10 @@ abstract class TestCase extends Testbench\TestCase
                 }
 
                 if ($route->allowsTrashedBindings() !== $withTrashed) {
+                    return false;
+                }
+
+                if ($domain !== null && $route->getDomain() !== $domain) {
                     return false;
                 }
 
