@@ -96,8 +96,13 @@ class RouteRegistrar
 
             foreach ($routeDetails->methods as $httpMethod) {
                 /** @var Method $httpMethod */
-                call_user_func([Route::class, $httpMethod->value], $routeDetails->uri, $routeDetails->action)
-                    ->when($routeDetails->prefix !== '', fn (\Illuminate\Routing\Route $route) => $route->prefix($routeDetails->prefix))
+                $prefix = trim($routeDetails->prefix, '/');
+                $routeUri = ltrim($routeDetails->uri, '/');
+                $uri = $prefix !== '' && $routeUri !== ''
+                    ? $prefix.'/'.$routeUri
+                    : ($prefix !== '' ? $prefix : $routeUri);
+
+                call_user_func([Route::class, $httpMethod->value], $uri, $routeDetails->action)
                     ->when(filled($this->directory?->domain), fn (\Illuminate\Routing\Route $route) => $route->domain($this->directory->domain))
                     ->name($routeDetails->name)
                     ->when($routeDetails->withTrashed, fn (\Illuminate\Routing\Route $route) => $route->withTrashed())
@@ -159,6 +164,6 @@ class RouteRegistrar
 
     private function getPrefix(Attributes\Route $routeAttribute): string
     {
-        return implode('/', array_filter([$this->directory?->prefix, $routeAttribute->prefix], fn ($value) => $value !== ''));
+        return implode('/', array_filter([$this->directory?->prefix, $routeAttribute->prefix], fn ($value) => filled($value)));
     }
 }

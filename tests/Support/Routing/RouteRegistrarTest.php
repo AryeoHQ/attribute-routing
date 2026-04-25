@@ -12,6 +12,7 @@ use Support\Routing\Exceptions\NamespaceNotFound;
 use Support\Routing\RouteRegistrar;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Tests\Fixtures;
+use Tests\Fixtures\Prefixed;
 use Tests\TestCase;
 
 #[CoversClass(RouteRegistrar::class)]
@@ -219,6 +220,78 @@ class RouteRegistrarTest extends TestCase
         ));
 
         $this->assertRouteHasNoDomain('bar');
+    }
+
+    #[Test]
+    public function routes_with_directory_prefix_register_at_the_correct_uri(): void
+    {
+        $this->routeRegistrar->registerDirectory(new DirectoryConfig(
+            path: __DIR__.'/../../Fixtures/Prefixed',
+            middlewareGroup: 'api',
+            prefix: 'api/v1',
+        ));
+
+        $this->assertRouteRegistered(
+            controller: Prefixed\Resources\Show\Controller::class,
+            name: 'prefixed.resources.show',
+            uri: 'api/v1/resources/{resource}',
+            httpMethod: Method::Get,
+            middleware: ['api'],
+            withTrashed: false,
+        );
+    }
+
+    #[Test]
+    public function prefixed_routes_do_not_collide_with_non_prefixed_routes_at_the_same_relative_path(): void
+    {
+        $this->routeRegistrar->registerDirectory(new DirectoryConfig(
+            path: __DIR__.'/../../Fixtures/Prefixed',
+            middlewareGroup: 'api',
+            prefix: 'api/v1',
+        ));
+
+        $this->routeRegistrar = app(RouteRegistrar::class);
+
+        $this->routeRegistrar->registerDirectory(new DirectoryConfig(
+            path: __DIR__.'/../../Fixtures/Prefixed',
+        ));
+
+        $this->assertRouteRegistered(
+            controller: Prefixed\Resources\Show\Controller::class,
+            name: 'prefixed.resources.show',
+            uri: 'api/v1/resources/{resource}',
+            httpMethod: Method::Get,
+            middleware: ['api'],
+            withTrashed: false,
+        );
+
+        $this->assertRouteRegistered(
+            controller: Prefixed\Resources\Show\Controller::class,
+            name: 'prefixed.resources.show',
+            uri: 'resources/{resource}',
+            httpMethod: Method::Get,
+            middleware: null,
+            withTrashed: false,
+        );
+    }
+
+    #[Test]
+    public function directory_prefix_combines_with_route_level_prefix(): void
+    {
+        $this->routeRegistrar->registerDirectory(new DirectoryConfig(
+            path: __DIR__.'/../../Fixtures/Prefixed',
+            middlewareGroup: 'api',
+            prefix: 'api/v1',
+        ));
+
+        $this->assertRouteRegistered(
+            controller: Prefixed\Resources\Show\PrefixedController::class,
+            name: 'prefixed.resources.show.route-prefix',
+            uri: 'api/v1/v2/resources/{resource}',
+            httpMethod: Method::Get,
+            middleware: ['api'],
+            withTrashed: false,
+        );
     }
 
     #[Test]
