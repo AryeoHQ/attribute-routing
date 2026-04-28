@@ -96,18 +96,14 @@ class RouteRegistrar
 
             foreach ($routeDetails->methods as $httpMethod) {
                 /** @var Method $httpMethod */
-                $prefix = trim($routeDetails->prefix, '/');
-                $routeUri = ltrim($routeDetails->uri, '/');
-                $uri = $prefix !== '' && $routeUri !== ''
-                    ? $prefix.'/'.$routeUri
-                    : ($prefix !== '' ? $prefix : $routeUri);
-
-                call_user_func([Route::class, $httpMethod->value], $uri, $routeDetails->action)
+                Route::prefix($routeDetails->prefix)->group(fn () =>
+                call_user_func([Route::class, $httpMethod->value], $routeDetails->uri, $routeDetails->action)
                     ->when(filled($this->directory?->domain), fn (\Illuminate\Routing\Route $route) => $route->domain($this->directory->domain))
                     ->name($routeDetails->name)
                     ->when($routeDetails->withTrashed, fn (\Illuminate\Routing\Route $route) => $route->withTrashed())
                     ->when($routeDetails->middleware, fn (\Illuminate\Routing\Route $route) => $route->middleware($routeDetails->middleware))
-                    ->when(count($routeDetails->withoutMiddleware) > 0, fn (\Illuminate\Routing\Route $route) => $route->withoutMiddleware($routeDetails->withoutMiddleware));
+                    ->when(count($routeDetails->withoutMiddleware) > 0, fn (\Illuminate\Routing\Route $route) => $route->withoutMiddleware($routeDetails->withoutMiddleware))
+                );
             }
         }
     }
