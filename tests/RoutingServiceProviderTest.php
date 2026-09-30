@@ -160,7 +160,7 @@ class RoutingServiceProviderTest extends TestCase
         parent::tearDown();
     }
 
-    protected ?string $configCachePath = null;
+    protected null|string $configCachePath = null;
 
     protected function useProcessConfigCachePath(): void
     {
