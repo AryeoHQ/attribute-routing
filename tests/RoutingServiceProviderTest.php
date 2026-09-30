@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Illuminate\Support\Facades\File;
 use Orchestra\Testbench\Attributes\DefineEnvironment;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -104,6 +105,38 @@ class RoutingServiceProviderTest extends TestCase
             middleware: null,
             domain: 'api.example.com',
         );
+    }
+
+    #[Test]
+    public function it_registers_routes_from_cached_config(): void
+    {
+        $this->artisan('config:cache')->assertSuccessful();
+
+        $cached = require $this->app->getCachedConfigPath();
+
+        $this->assertEquals(
+            [new DirectoryConfig(path: app_path('Http/Controllers'), middlewareGroup: 'api')],
+            $cached['routing']['directories'],
+        );
+
+        $this->refreshApplication();
+
+        $this->assertTrue($this->app->configurationIsCached());
+
+        $this->assertRouteRegistered(
+            controller: Fixtures\Bar\Controller::class,
+            name: 'bar',
+            uri: 'bar',
+            httpMethod: Method::Get,
+            middleware: ['auth', 'throttle:100,1'],
+        );
+    }
+
+    protected function tearDown(): void
+    {
+        File::delete($this->app->getCachedConfigPath());
+
+        parent::tearDown();
     }
 
     protected function withDomainConfig($app): void

@@ -36,6 +36,8 @@ Each `DirectoryConfig` accepts the following parameters:
 | `prefix` | `?string` | `null` | URI prefix for all routes |
 | `domain` | `?string` | `null` | Restrict routes to a specific domain |
 
+A config that holds `DirectoryConfig` objects supports `php artisan config:cache`.
+
 ### Domain restriction
 
 You can restrict all routes in a directory to a specific domain:
