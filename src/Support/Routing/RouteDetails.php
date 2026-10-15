@@ -20,7 +20,7 @@ final readonly class RouteDetails
         public array $methods,
         public string|array $action,
         public string $prefix,
-        public ?bool $withTrashed,
+        public null|bool $withTrashed,
         public array $withoutMiddleware,
         public array $middleware,
     ) {}

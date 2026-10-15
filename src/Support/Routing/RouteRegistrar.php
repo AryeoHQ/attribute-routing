@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 class RouteRegistrar
 {
-    protected ?DirectoryConfig $directory = null;
+    protected null|DirectoryConfig $directory = null;
 
     public function registerDirectory(DirectoryConfig $directory): void
     {
@@ -96,8 +96,7 @@ class RouteRegistrar
 
             foreach ($routeDetails->methods as $httpMethod) {
                 /** @var Method $httpMethod */
-                Route::prefix($routeDetails->prefix)->group(fn () =>
-                call_user_func([Route::class, $httpMethod->value], $routeDetails->uri, $routeDetails->action)
+                Route::prefix($routeDetails->prefix)->group(fn () => call_user_func([Route::class, $httpMethod->value], $routeDetails->uri, $routeDetails->action)
                     ->when(filled($this->directory?->domain), fn (\Illuminate\Routing\Route $route) => $route->domain($this->directory->domain))
                     ->name($routeDetails->name)
                     ->when($routeDetails->withTrashed, fn (\Illuminate\Routing\Route $route) => $route->withTrashed())

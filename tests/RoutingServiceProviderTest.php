@@ -84,8 +84,8 @@ class RoutingServiceProviderTest extends TestCase
         );
     }
 
-    #[Test]
     #[DefineEnvironment('withDomainConfig')]
+    #[Test]
     public function it_registers_routes_with_domain_from_config(): void
     {
         $this->assertRouteRegistered(
